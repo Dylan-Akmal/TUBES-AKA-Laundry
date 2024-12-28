@@ -1,7 +1,7 @@
 // Data pelanggan disimpan dalam array
 let dataPelanggan = [];
 
-// Generate 10000 data pelanggan secara otomatis
+// Generate 100000 data pelanggan secara otomatis
 function generateData() {
   for (let i = 1; i <= 100000; i++) {
     const randomDate = new Date(2023, Math.floor(Math.random() * 12), Math.ceil(Math.random() * 28));
@@ -31,11 +31,10 @@ function updateDataList(jumlah) {
 }
 
 // Fungsi pencarian iteratif
-function cariPelangganIteratif(tanggal) {
+function cariPelangganIteratifDariBelakang(tanggal) {
   const results = [];
-  for (let i = 0; i < dataPelanggan.length; i++) {
-    if (dataPelanggan[i].waktuMasuk === tanggal || 
-      dataPelanggan[i].waktuKeluar === tanggal) {
+  for (let i = dataPelanggan.length - 1; i >= 0; i--) {
+    if (dataPelanggan[i].waktuMasuk === tanggal || dataPelanggan[i].waktuKeluar === tanggal) {
       results.push(dataPelanggan[i]);
     }
   }
@@ -43,13 +42,12 @@ function cariPelangganIteratif(tanggal) {
 }
 
 // Fungsi pencarian rekursif
-function cariPelangganRekursif(tanggal, index = 0, results = []) {
-  if (index >= dataPelanggan.length) return results;
-  if (dataPelanggan[index].waktuMasuk === tanggal || 
-    dataPelanggan[index].waktuKeluar === tanggal) {
+function cariPelangganRekursifDariBelakang(tanggal, index = dataPelanggan.length - 1, results = []) {
+  if (index < 0) return results;
+  if (dataPelanggan[index].waktuMasuk === tanggal || dataPelanggan[index].waktuKeluar === tanggal) {
     results.push(dataPelanggan[index]);
   }
-  return cariPelangganRekursif(tanggal, index + 1, results);
+  return cariPelangganRekursifDariBelakang(tanggal, index - 1, results);
 }
 
 // Tampilkan hasil pencarian
@@ -81,12 +79,12 @@ document.getElementById("jumlahData").addEventListener("input", (e) => {
   }
 });
 
-// Event listener untuk pencarian iteratif
+// Event listener untuk pencarian iteratif (dari belakang)
 document.getElementById("searchIterativeButton").addEventListener("click", () => {
   const searchDate = document.getElementById("searchDate").value;
   if (searchDate) {
     const start = performance.now(); // Waktu mulai
-    const results = cariPelangganIteratif(searchDate);
+    const results = cariPelangganIteratifDariBelakang(searchDate);
     const end = performance.now(); // Waktu selesai
     tampilkanHasil(results, end - start);
   } else {
@@ -94,18 +92,19 @@ document.getElementById("searchIterativeButton").addEventListener("click", () =>
   }
 });
 
-// Event listener untuk pencarian rekursif
+// Event listener untuk pencarian rekursif (dari belakang)
 document.getElementById("searchRecursiveButton").addEventListener("click", () => {
   const searchDate = document.getElementById("searchDate").value;
   if (searchDate) {
     const start = performance.now(); // Waktu mulai
-    const results = cariPelangganRekursif(searchDate);
+    const results = cariPelangganRekursifDariBelakang(searchDate);
     const end = performance.now(); // Waktu selesai
     tampilkanHasil(results, end - start);
   } else {
     alert("Masukkan tanggal untuk mencari.");
   }
 });
+
 
 // Inisialisasi
 generateData();
